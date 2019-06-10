@@ -1,2 +1,3 @@
-build/!.gitkeep
+build/
+yarn-error.log
 node_modules

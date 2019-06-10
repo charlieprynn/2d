@@ -11,6 +11,7 @@
   "keywords": [],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server -d --content-base ./src",
     "check": "gts check",
     "clean": "gts clean",
     "compile": "tsc -p .",
@@ -21,9 +22,16 @@
   },
   "devDependencies": {
     "@types/node": "^12.0.7",
+    "clean-webpack-plugin": "0.1.19",
     "gts": "^1.0.0",
+    "html-webpack-plugin": "3.2.0",
     "tslint": "^5.17.0",
-    "typescript": "~3.4.0"
+    "typescript": "~3.5.0",
+    "webpack": "4.16.5",
+    "webpack-cli": "3.1.0",
+    "webpack-dev-server": "3.1.5"
   },
-  "dependencies": {}
+  "dependencies": {
+    "ts-loader": "^6.0.2"
+  }
 }
