@@ -15,14 +15,20 @@ export class Game {
       delta: number;
       interval: number;
     };
-    objects: ObjectTypes[]
+    objects: ObjectTypes[],
   };
 
   constructor(canvas: HTMLCanvasElement) {
+    // Frames per second
     const fps = 30;
+
+    // Node event emiter
     this.event = new EventEmitter();
+
+    // Rendering engine
     this.renderer = new Renderer(canvas);
 
+    // Game state
     this.state = {
       game: {
         fps,
@@ -31,16 +37,18 @@ export class Game {
         delta: 0,
         interval: 1000 / fps,
       },
-      objects: [],
+      objects: [new Tree(10, 10, 0, 10), new Tree(10, 10, 50, 10), new Tree(10, 10, 100, 10)],
     };
 
-    this.bindEvents();
+    // Start listening to events
+    this.listen();
+
+    // Start the loop
     this.loop();
   }
 
-  bindEvents() {
-    this.event.on('loop', this.render.bind(this));
-    this.event.on('clear', this.renderer.clear.bind(this.renderer));
+  listen() {
+    this.event.on('loop', this.main.bind(this));
   }
 
   loop() {
@@ -54,16 +62,15 @@ export class Game {
       this.state.game.lastTime =
         this.state.game.currentTime -
         (this.state.game.delta % this.state.game.interval);
+
       this.event.emit('loop');
     }
   }
-  render() {
-    this.state.objects = [new Tree(10, 10, 10, 10), new Tree(10, 10, 100, 100), new Tree(10, 10, 200, 200), new Tree(10, 10, 300,300)];
-    
-    this.event.emit('clear');
 
+  main() {
+    // Render the objects (that are in view)
     this.renderer.renderObjects(this.state.objects);
-
+    
     this.event.emit('render');
   }
 }

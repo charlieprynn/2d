@@ -17,19 +17,27 @@ export class Renderer {
     };
   }
 
-  clear(): void {
+  clear(x: number, y: number, width: number, height: number): void {
     this.state.ctx.clearRect(
-      0,
-      0,
-      this.state.canvas.width,
-      this.state.canvas.width
+      x,
+      y,
+      width,
+      height
     );
   }
 
+  draw(render: RenderType): void {
+    this.state.ctx[render.method](render.path);
+  }
+
   render(object: ObjectTypes): void {
+    const {x, y} = object.getPosition();
+    const {width, height} = object.getDimensions();
+
     const render: RenderType = object.render();
 
-    this.state.ctx[render.method](render.path);
+    this.clear(x, y, width, height);
+    this.draw(render);
   }
 
   renderObjects(objects: ObjectTypes[]) {

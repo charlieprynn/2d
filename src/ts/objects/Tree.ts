@@ -16,7 +16,7 @@ export class Tree extends AbstractObject {
 
     return {
       path,
-      method: 'fill',
+      method: Math.random() < 0.5 ? 'fill' : 'stroke',
     };
   }
 
