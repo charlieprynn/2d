@@ -1,7 +1,7 @@
 module.exports = {
-  entry: "./src/index.ts",
+  entry: "./src/ts/index.ts",
   output: {
-      path: '/build/',
+      path: __dirname + '/build/',
       filename: "build.js"
   },
   resolve: {

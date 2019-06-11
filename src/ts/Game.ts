@@ -2,8 +2,11 @@ import EventEmitter from 'events';
 import { Tree } from './objects/Tree';
 import { Renderer } from './Renderer';
 
+import { ObjectTypes } from './types';
+
 export class Game {
   event: NodeJS.EventEmitter;
+  renderer: Renderer;
   state: {
     game: {
       fps: number;
@@ -12,17 +15,13 @@ export class Game {
       delta: number;
       interval: number;
     };
-    objects: {
-      tree: Tree;
-    };
-    renderer: Renderer;
+    objects: ObjectTypes[]
   };
 
   constructor(canvas: HTMLCanvasElement) {
     const fps = 30;
-    const renderer = new Renderer(canvas);
-
     this.event = new EventEmitter();
+    this.renderer = new Renderer(canvas);
 
     this.state = {
       game: {
@@ -32,10 +31,7 @@ export class Game {
         delta: 0,
         interval: 1000 / fps,
       },
-      objects: {
-        tree: new Tree(),
-      },
-      renderer,
+      objects: [],
     };
 
     this.bindEvents();
@@ -44,7 +40,7 @@ export class Game {
 
   bindEvents() {
     this.event.on('loop', this.render.bind(this));
-    this.event.on('clear', this.state.renderer.clear.bind(this.state.renderer));
+    this.event.on('clear', this.renderer.clear.bind(this.renderer));
   }
 
   loop() {
@@ -62,9 +58,11 @@ export class Game {
     }
   }
   render() {
+    this.state.objects = [new Tree(10, 10, 10, 10), new Tree(10, 10, 100, 100), new Tree(10, 10, 200, 200), new Tree(10, 10, 300,300)];
+    
     this.event.emit('clear');
 
-    console.log('render');
+    this.renderer.renderObjects(this.state.objects);
 
     this.event.emit('render');
   }
