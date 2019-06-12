@@ -1,7 +1,7 @@
 import { AbstractObject } from './AbstractObject';
 import { RenderType } from '../types';
 
-export class Tree extends AbstractObject {
+export class Viewport extends AbstractObject {
   constructor(width: number, height: number, x: number, y: number) {    
     super(width, height, x, y);
   }
@@ -16,18 +16,11 @@ export class Tree extends AbstractObject {
 
     return {
       path,
-      method: 'fill',
+      method: 'stroke',
       properties: {
-        fillStyle: '#26703F',
+        strokeStyle: 'red',
       },
-      clear: true,
+      clear: false,
     };
-  }
-
-  updatePosition() {
-    const x = Math.floor((Math.random() * 100) + 1);
-    const y = Math.floor((Math.random() * 100) + 1);
-
-    this.setPosition(x, y);
   }
 }

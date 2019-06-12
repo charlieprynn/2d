@@ -31,7 +31,7 @@ export abstract class AbstractObject {
     return this.state.position;
   }
 
-  getDimensions(): { width: number; height: number } {
+   getDimensions(): { width: number; height: number } {
     return this.state.dimensions;
   }
 
