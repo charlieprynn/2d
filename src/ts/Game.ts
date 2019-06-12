@@ -61,8 +61,8 @@ export class Game {
         ArrowDown: false,
       },
       tiles: {
-        width: 20,
-        height: 20,
+        width: 10,
+        height: 10,
       },      
       grid: {
         width: 30,
@@ -112,9 +112,9 @@ export class Game {
         const height = this.state.tiles.height;
 
         const tX = (x * this.state.tiles.width) + ((this.renderer.getDimensions().width - this.state.viewport.width) / 2);
-        const tY = (y * this.state.tiles.height) + ((this.renderer.getDimensions().width - this.state.viewport.width) / 2);
+        const tY = (y * this.state.tiles.height) + ((this.renderer.getDimensions().height - this.state.viewport.height) / 2);
 
-        if(Math.random() < 0.5){
+        if(Math.random() < 0.8){
           this.state.objects.push(new Tile(width, height, tX, tY));
         }
         else{
@@ -123,6 +123,7 @@ export class Game {
       }
     }
 
+    this.renderer.renderObjects(this.state.objects);
     console.log(this.state.objects);
   }
   
@@ -151,7 +152,6 @@ export class Game {
   
   private main(): void {
     // Render the objects (that are in view)
-    this.renderer.renderObjects(this.state.objects);
 
     this.renderer.render(this.viewport);
     this.event.emit('render');
