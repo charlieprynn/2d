@@ -2,6 +2,7 @@ import { RenderType } from '../types';
 
 export abstract class AbstractObject {
   state: {
+    index: number;
     position: {
       x: number;
       y: number;
@@ -12,16 +13,17 @@ export abstract class AbstractObject {
     }
   };
 
-  constructor(width: number, height: number, x: number, y: number) {
+  constructor(width: number, height: number, x: number, y: number, index: number) {
    this.state = {
-     position: {
-       x,
-       y,
-     },
-     dimensions: {
-       width,
-       height,
-     },
+      index,
+      position: {
+        x,
+        y,
+      },
+      dimensions: {
+        width,
+        height,
+      },
    };
   }
 

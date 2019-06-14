@@ -2,8 +2,11 @@ import { AbstractObject } from './AbstractObject';
 import { RenderType } from '../types';
 
 export class Tile extends AbstractObject {
-  constructor(width: number, height: number, x: number, y: number) {    
-    super(width, height, x, y);
+  colour: string;
+  constructor(width: number, height: number, x: number, y: number, index: number) {    
+    super(width, height, x, y, index);
+
+    this.colour = '#' + Math.floor(Math.random()*16777215).toString(16);
   }
   
   render(): RenderType {
@@ -16,9 +19,9 @@ export class Tile extends AbstractObject {
 
     return {
       path,
-      method: 'fill',
+      method: 'stroke',
       properties: {
-        fillStyle: '#6D706E',
+        strokeStyle: '#E3E3E3',
       },
       clear: true,
     };

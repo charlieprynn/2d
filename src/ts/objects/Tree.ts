@@ -2,8 +2,8 @@ import { AbstractObject } from './AbstractObject';
 import { RenderType } from '../types';
 
 export class Tree extends AbstractObject {
-  constructor(width: number, height: number, x: number, y: number) {    
-    super(width, height, x, y);
+  constructor(width: number, height: number, x: number, y: number, index: number) {    
+    super(width, height, x, y, index);
   }
   
   render(): RenderType {
@@ -16,9 +16,9 @@ export class Tree extends AbstractObject {
 
     return {
       path,
-      method: 'fill',
+      method: 'stroke',
       properties: {
-        fillStyle: '#26703F',
+        strokeStyle: '#26703F',
       },
       clear: true,
     };
