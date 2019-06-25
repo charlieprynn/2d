@@ -6,11 +6,18 @@ import { Viewport } from './objects/Viewport';
 export type ObjectTypes = Tree | Tile | Viewport;
 
 export interface RenderType {
-    path: Path2D;
-    method: 'stroke' | 'fill';
-    properties: {
-      strokeStyle?: string
-      fillStyle?: string
+  method?: 'path' | 'image';
+  clear: boolean;
+  properties: {
+    image?: {
+      image: HTMLImageElement,
+      x: number,
+      y: number,
+      width: number,
+      height: number
     };
-    clear: boolean;
+    path?: Path2D;
+    pathMethod?: 'stroke' | 'fill'
+    color?: string
   }
+}

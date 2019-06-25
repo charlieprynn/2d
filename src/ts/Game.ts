@@ -41,7 +41,7 @@ export class Game {
       x: number;
       y: number;
     }
-    objects: ObjectTypes[],
+    objects: ObjectTypes[][],
   };
 
   constructor(canvas: HTMLCanvasElement) {
@@ -63,12 +63,12 @@ export class Game {
         ArrowDown: false,
       },
       tiles: {
-        width: 30,
-        height: 30,
-      },      
-      grid: {
         width: 50,
         height: 50,
+      },      
+      grid: {
+        width: 100,
+        height: 100,
       },
       viewport: {
         width: 300,
@@ -94,11 +94,15 @@ export class Game {
       this.state.viewport.height, 
       ((canvasDimensions.width - this.state.viewport.width) / 2), 
       ((canvasDimensions.height - this.state.viewport.height) / 2), 
-      99999999
+      -1
     );
 
     // Build the  to be rendered
     this.generate();
+
+   // this.renderer.render(new Tree(15, 15, 30, 30, 1, '/asset/tree.png'));
+
+    this.render();
 
     //this.renderer.renderObjects(this.state.objects);
 
@@ -118,21 +122,19 @@ export class Game {
   }
 
   private generate(): void {
-    let index = 0;
+    for(let x = 0; x < this.state.grid.width; ++x) {
+      this.state.objects[x] = [];
 
-    for(let y = 0; y < this.state.grid.height; ++y) {
-      for(let x = 0; x < this.state.grid.width; ++x) {
+      for(let y = 0; y < this.state.grid.height; ++y) {
         const width = this.state.tiles.width;
         const height = this.state.tiles.height;
 
         if(Math.random() < 0.9) {
-          this.state.objects.push(new Tile(width, height, (x * width), (y * height), index));
+          this.state.objects[x].push(new Tile(width, height, (x * width), (y * height), x + y));
         }
         else {
-          this.state.objects.push(new Tree(width, height, (x * width), (y * height), index));
+          this.state.objects[x].push(new Tree(width, height, (x * width), (y * height), x + y, '/asset/tree.png'));
         }
-
-        index++;
       }
     }
 
@@ -169,58 +171,89 @@ export class Game {
     const {ArrowLeft, ArrowRight, ArrowUp, ArrowDown} = this.state.controls;
 
     if(ArrowLeft) {
-      this.state.viewport.x--;
+      if(this.state.viewport.x > 0){
+        this.state.viewport.x--;
+      }
     }
 
     if(ArrowRight) {
-      this.state.viewport.x++;
+      if(this.state.viewport.x < (this.state.grid.width - 1)){
+        this.state.viewport.x++;
+      }
     }
     if(ArrowUp) {
-      this.state.viewport.y--;
+      if(this.state.viewport.y > 0){
+        this.state.viewport.y--;
+      }
     }
 
     if(ArrowDown) {
-      this.state.viewport.y++;
+      if(this.state.viewport.y < (this.state.grid.height - 1)){
+        this.state.viewport.y++;
+      }
     }
   }
   
   private render(): void {
     const canvasDimensions = this.renderer.getDimensions();
 
+    this.renderer.state.ctx.font =  "normal normal 12px Arial";
+
     // Temp clear whole canvas
+    this.renderer.state.ctx.fillStyle = '#FFFFFF';
     this.renderer.state.ctx.fillRect( 0,  0, canvasDimensions.width, canvasDimensions.height);
 
-    // Get the viewport center relative to the canvas size (x, y)
-    const viewportCenterX = Math.floor((this.viewport.getPosition().x + (this.viewport.getDimensions().width / 2)));
-    const viewportCenterY = Math.floor((this.viewport.getPosition().y + (this.viewport.getDimensions().height/ 2)));
+    let index = 0;
 
-    // Get the bottom and right coordinates of the viewport
-    const viewportBottomX = Math.ceil(((canvasDimensions.width + this.state.viewport.width) / 2));
-    const viewportBottomY = Math.ceil(((canvasDimensions.height + this.state.viewport.height) / 2));
-   
-    // The start x/y for the array indexes
-    const startX = Math.floor(((this.viewport.getPosition().x) / this.state.tiles.width));
-    const startY = Math.floor(((this.viewport.getPosition().y)  / this.state.tiles.height));
-    
-    // The end x/y for the array indexes
-    const endX = Math.floor((viewportBottomX / this.state.tiles.width));
-    const endY = Math.floor((viewportBottomY / this.state.tiles.height));
+    let startX = (this.state.viewport.x);
+    let startY = (this.state.viewport.y);
 
-    for(let y = startY; y <= endY; y++) {
-      for(let x = startX; x <= endX; x++) {
-        const objectX = (this.state.viewport.x + x) - 1;
-        const objectY = (this.state.viewport.y + y) - 1;
-
-        const index = ((objectY * this.state.grid.width) + objectX);
-        const object = this.state.objects[index];
-
-        object.setPosition((x * this.state.tiles.width), (y * this.state.tiles.height));
-
-        this.renderer.render(object);
-      }
+    if(startX < 0) {
+      startX = 0;
     }
 
-    //this.renderer.render(this.viewport);
+    if(startY < 0) {
+      startY = 0;
+    }
+
+    let gridX = Math.floor((this.viewport.getDimensions().width / this.state.tiles.width) + startX);
+    let gridY = Math.floor((this.viewport.getDimensions().height / this.state.tiles.height) + startY);
+
+    const offsetX = Math.floor((this.renderer.getDimensions().width / 2) - (this.viewport.getDimensions().width / 2));
+    const offsetY = Math.floor((this.renderer.getDimensions().height / 2) - (this.viewport.getDimensions().height / 2));
+
+    if(gridX > this.state.grid.width) {
+      gridX = this.state.grid.width;
+    }
+
+    if(gridY > this.state.grid.height) {
+      gridY = this.state.grid.height;
+    }
+
+    let loopX = 0;
+    let loopY = 0;
+
+    for (let x = startX; x < gridX; x++) {
+      loopY = 0;
+
+      for (let y = startY; y < gridY; y++) {
+        const object = this.state.objects[x][y];
+
+        const objectX = (loopX * this.state.tiles.width) + offsetX;
+        const objectY = (loopY * this.state.tiles.height) + offsetY;
+  
+        object.setPosition(objectX, objectY);
+
+        this.renderer.render(object);
+        
+        index++;
+        loopY++;
+      }
+
+      loopX ++;
+    }
+
+    this.renderer.render(this.viewport);
 
    // this.renderer.state.ctx.fillRect(viewportCenterX - 2.5, viewportCenterY - 2.5, 5, 5);
    // this.renderer.state.ctx.fillRect( (this.viewport.getPosition().x - 5), (this.viewport.getPosition().y - 5), 10, 10);
@@ -228,8 +261,6 @@ export class Game {
   }
 
   private main(): void {
-    this.render();
-
     // Scroll the viewport while user is pushing keys
     this.event.emit('render');
   }

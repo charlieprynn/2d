@@ -7,10 +7,17 @@ document.addEventListener(
       'canvas'
     ) as HTMLCanvasElement;
 
-    const game = new Game(canvas);
+    const asset: HTMLImageElement = new Image();
+    asset.src = '/asset/tree.png';
 
-    // tslint:disable-next-line: no-any
-    (window as any).game = game;
+    if(asset){
+      asset.onload = () => {
+        const game = new Game(canvas);
+  
+        // tslint:disable-next-line: no-any
+        (window as any).game = game;
+      };
+    }
   },
   false
 );

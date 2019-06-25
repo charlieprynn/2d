@@ -30,7 +30,7 @@ export class Renderer {
       this.clear(x, y, width, height);
     }
 
-    this.state.ctx.fillStyle = 'red';
+    this.state.ctx.fillStyle = 'blue';
     this.state.ctx.fillText(object.state.index.toString(), x, y + 15);
 
     this.draw(render);
@@ -59,15 +59,23 @@ export class Renderer {
   }
 
   private draw(render: RenderType): void {
-    if(render.properties.fillStyle) {
-      this.state.ctx.fillStyle = render.properties.fillStyle;
-    }    
-    
-    if(render.properties.strokeStyle) {
-      this.state.ctx.strokeStyle = render.properties.strokeStyle;
+    if(render.method === 'path') {
+      if(render.properties.pathMethod === 'fill') {
+        this.state.ctx.fillStyle = render.properties.color ? render.properties.color : '';
+        this.state.ctx[render.properties.pathMethod](render.properties.path || new Path2D());
+      }
+      
+      if(render.properties.pathMethod === 'stroke') {
+        this.state.ctx.strokeStyle = render.properties.color ? render.properties.color : '';
+        this.state.ctx[render.properties.pathMethod](render.properties.path || new Path2D());
+      }
     }
 
+    if(render.method === 'image' && render.properties.image) {
+      this.state.ctx.drawImage(render.properties.image.image || new Image(), render.properties.image.x, render.properties.image.y, render.properties.image.width, render.properties.image.height);
 
-    this.state.ctx[render.method](render.path);
+      
+      //(render.properties.image.image, 0, 0, render.properties.image.x, render.properties.image.y); 
+    }
   }
 }

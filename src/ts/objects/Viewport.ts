@@ -15,12 +15,13 @@ export class Viewport extends AbstractObject {
     path.rect(x, y, width, height);
 
     return {
-      path,
-      method: 'stroke',
-      properties: {
-        strokeStyle: 'red',
-      },
+      method: 'path',
       clear: false,
+      properties: {
+        path,
+        pathMethod:  'stroke',
+        color: 'blue',
+      },
     };
   }
 }

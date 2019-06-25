@@ -18,12 +18,13 @@ export class Tile extends AbstractObject {
     path.rect(x, y, width, height);
 
     return {
-      path,
-      method: 'stroke',
-      properties: {
-        strokeStyle: '#E3E3E3',
-      },
+      method: 'path',
       clear: true,
+      properties: {
+        path,
+        pathMethod:  'fill',
+        color: '#E3E3E3',
+      },
     };
   }
 }
