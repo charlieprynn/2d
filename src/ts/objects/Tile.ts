@@ -23,7 +23,7 @@ export class Tile extends AbstractObject {
       properties: {
         path,
         pathMethod:  'fill',
-        color: '#E3E3E3',
+        color: 'transparent',
       },
     };
   }

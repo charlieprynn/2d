@@ -3,10 +3,7 @@ import { Tree } from './objects/Tree';
 import { Tile } from './objects/Tile';
 import { Viewport } from './objects/Viewport';
 import { Renderer } from './Renderer';
-
 import { ObjectTypes } from './types';
-
-
 
 export class Game {
   event: NodeJS.EventEmitter;
@@ -41,7 +38,7 @@ export class Game {
       x: number;
       y: number;
     }
-    objects: ObjectTypes[][],
+    objects: Array<Array<{tile: Tile, objects: ObjectTypes[]}>>,
   };
 
   constructor(canvas: HTMLCanvasElement) {
@@ -63,8 +60,8 @@ export class Game {
         ArrowDown: false,
       },
       tiles: {
-        width: 50,
-        height: 50,
+        width: 46,
+        height: 46,
       },      
       grid: {
         width: 100,
@@ -128,13 +125,18 @@ export class Game {
       for(let y = 0; y < this.state.grid.height; ++y) {
         const width = this.state.tiles.width;
         const height = this.state.tiles.height;
+        const data: { tile: Tile, objects: ObjectTypes[] }  = {
+          tile: new Tile(width, height, 0, 0, x + y),
+          objects: [],
+        };
 
-        if(Math.random() < 0.9) {
-          this.state.objects[x].push(new Tile(width, height, (x * width), (y * height), x + y));
+        if(Math.random() > 0.8) {
+          data.objects.push(
+            new Tree(width / 2, height / 2, 0, 0, x + y, '/asset/tree.png')
+          );
         }
-        else {
-          this.state.objects[x].push(new Tree(width, height, (x * width), (y * height), x + y, '/asset/tree.png'));
-        }
+
+        this.state.objects[x].push(data);
       }
     }
 
@@ -170,43 +172,44 @@ export class Game {
   private move(): void {
     const {ArrowLeft, ArrowRight, ArrowUp, ArrowDown} = this.state.controls;
 
+    const incrementer = 0.5;
+
     if(ArrowLeft) {
       if(this.state.viewport.x > 0){
-        this.state.viewport.x--;
+        this.state.viewport.x = this.state.viewport.x - incrementer;
       }
     }
 
     if(ArrowRight) {
       if(this.state.viewport.x < (this.state.grid.width - 1)){
-        this.state.viewport.x++;
+        this.state.viewport.x = this.state.viewport.x + incrementer;
+
       }
     }
     if(ArrowUp) {
       if(this.state.viewport.y > 0){
-        this.state.viewport.y--;
+        this.state.viewport.y = this.state.viewport.y - incrementer;
       }
     }
 
     if(ArrowDown) {
-      if(this.state.viewport.y < (this.state.grid.height - 1)){
-        this.state.viewport.y++;
+      if(this.state.viewport.y < (this.state.grid.height - 1)) {
+        this.state.viewport.y = this.state.viewport.y + incrementer;
       }
     }
   }
   
   private render(): void {
-    const canvasDimensions = this.renderer.getDimensions();
-
     this.renderer.state.ctx.font =  "normal normal 12px Arial";
 
     // Temp clear whole canvas
-    this.renderer.state.ctx.fillStyle = '#FFFFFF';
-    this.renderer.state.ctx.fillRect( 0,  0, canvasDimensions.width, canvasDimensions.height);
+    //this.renderer.state.ctx.fillStyle = '#FFFFFF';
+    //this.renderer.state.ctx.fillRect( 0,  0, canvasDimensions.width, canvasDimensions.height);
 
     let index = 0;
 
-    let startX = (this.state.viewport.x);
-    let startY = (this.state.viewport.y);
+    let startX = Math.floor(this.state.viewport.x);
+    let startY = Math.floor(this.state.viewport.y);
 
     if(startX < 0) {
       startX = 0;
@@ -242,10 +245,16 @@ export class Game {
         const objectX = (loopX * this.state.tiles.width) + offsetX;
         const objectY = (loopY * this.state.tiles.height) + offsetY;
   
-        object.setPosition(objectX, objectY);
+        object.tile.setPosition(objectX, objectY);
 
-        this.renderer.render(object);
-        
+        this.renderer.render(object.tile);
+
+        for(let j = 0; j < object.objects.length; j++){
+          object.objects[j].setPosition(objectX , objectY);
+
+          this.renderer.render(object.objects[j]);
+        }
+
         index++;
         loopY++;
       }
@@ -261,6 +270,7 @@ export class Game {
   }
 
   private main(): void {
+    this.render();
     // Scroll the viewport while user is pushing keys
     this.event.emit('render');
   }

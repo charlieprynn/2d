@@ -7,7 +7,7 @@ export class Tree extends AbstractImageObject {
   }
   
   render(): RenderType {
-    const image = new Image(15, 15);
+    const image = new Image(16, 32);
     image.src = this.state.image.url;
 
     const { x, y } = this.state.position;
@@ -21,8 +21,9 @@ export class Tree extends AbstractImageObject {
           image,
           x,
           y,
-          width,
-          height,
+          //31, 46
+          width: 31,
+          height: 46,
         },
       },
     };
